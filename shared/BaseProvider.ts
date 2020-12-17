@@ -1,7 +1,6 @@
 import {
     ConnectionPool,
-    IRecordSet,
-    VarChar,
+    IRecordSet
 } from "mssql";
 
 import { QueryArgs } from "./QueryArgs";

@@ -44,7 +44,7 @@ export class BookProvider extends BaseProvider implements DataProvider<Book> {
         let records = await this.executeQuery(this.sqlGetBook, args);
         if (records.length > 0) {
             let rec = records[0];
-            return new Book(rec.isbn, rec.title, rec.authors, rec.tags);
+            return { isbn: rec.isbn, title: rec.title, authors: rec.authors, tags: rec.tags };
         }
         return null;
     }
@@ -52,7 +52,7 @@ export class BookProvider extends BaseProvider implements DataProvider<Book> {
     async getAll(): Promise<Book[]> {
         let books: Book[] = [];
         let records = await this.executeQuery(this.sqlGetAllBooks, []);
-        records.forEach(r => books.push(new Book(r.isbn, r.title, r.authors, r.tags)));
+        records.forEach(r => books.push({ isbn: r.isbn, title: r.title, authors: r.authors, tags: r.tags }));
         return books;
     }
 
