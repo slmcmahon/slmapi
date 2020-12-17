@@ -17,7 +17,7 @@ export class RequestHandler {
         const id = context.bindingData.id;
 
         if (req.method === "POST") {
-            let value: T = req.body;
+            let value: any = req.body;
             console.log(value);
             try {
                 await provider.create(value);

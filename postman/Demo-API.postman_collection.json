@@ -234,7 +234,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:7071/api/books",
+					"raw": "http://localhost:7071/api/people",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -242,7 +242,7 @@
 					"port": "7071",
 					"path": [
 						"api",
-						"books"
+						"people"
 					]
 				}
 			},
@@ -266,7 +266,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:7071/api/books/1234",
+					"raw": "http://localhost:7071/api/people/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -274,8 +274,8 @@
 					"port": "7071",
 					"path": [
 						"api",
-						"books",
-						"1234"
+						"people",
+						"1"
 					]
 				}
 			},
@@ -296,7 +296,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:7071/api/books/1234",
+					"raw": "http://localhost:7071/api/people/2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -304,8 +304,8 @@
 					"port": "7071",
 					"path": [
 						"api",
-						"books",
-						"1234"
+						"people",
+						"2"
 					]
 				}
 			},

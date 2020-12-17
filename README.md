@@ -53,3 +53,8 @@ if not exists(select * from sys.objects where name = 'people' and type = 'u')
 ```
 
 - Test your functions using the Postman collection included in the /postman folder
+
+TODO:
+
+- Ensure proper return codes
+- Ensure proper returned values 
