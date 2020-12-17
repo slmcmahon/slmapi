@@ -2,7 +2,7 @@
 
 ### Steps
 
-- Clone this reposity
+- Clone this repository
 
 - Create the database server:
 ```
