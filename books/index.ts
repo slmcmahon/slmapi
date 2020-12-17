@@ -27,10 +27,7 @@ const bookfunc: AzureFunction = async function (context: Context, req: HttpReque
         try {
             let newId = await controller.create(book);
             context.res = {
-                status: 200,
-                body: {
-                    id: newId
-                }
+                status: 204
             };
         } catch (ex) {
             context.res = {
@@ -60,17 +57,19 @@ const bookfunc: AzureFunction = async function (context: Context, req: HttpReque
     else if (req.method === "GET") {
         try {
             let result: any;
-            // if (id) {
-            //     result = await controller.getSingle(id);
-            // } else {
-            //     result = await controller.getAll();
-            // }
-            if (result != null) {
+            if (id) {
+                result = await controller.get(id);
+            } else {
+                result = await controller.getAll();
+            }
+            if (result !== undefined) {
                 context.res = {
+                    status: 200,
                     body: JSON.stringify(result, null, 2)
                 };
             } else {
                 context.res = {
+                    status: 400,
                     message: `No records found for id ${id}`
                 }
             }
