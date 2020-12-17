@@ -1,23 +1,22 @@
 {
-  "bindings": [
-      {
-          "authLevel": "anonymous",
-          "type": "httpTrigger",
-          "direction": "in",
-          "name": "req",
-          "methods": [
-              "get",
-              "post",
-              "put",
-              "delete"
-          ],
-          "route": "books/{id?}"
-      },
-      {
-          "type": "http",
-          "direction": "out",
-          "name": "res"
-      }
-  ],
-  "scriptFile": "../dist/books/bookfunc/index.js"
+    "bindings": [{
+            "authLevel": "anonymous",
+            "type": "httpTrigger",
+            "direction": "in",
+            "name": "req",
+            "methods": [
+                "get",
+                "post",
+                "put",
+                "delete"
+            ],
+            "route": "books/{id?}"
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "res"
+        }
+    ],
+    "scriptFile": "../dist/books/index.js"
 }
