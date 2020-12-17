@@ -2,7 +2,7 @@ export class Book {
     private _title: string;
     private _isbn: string;
 
-    constructor(isbn : string, title : string) {
+    constructor(isbn: string, title: string) {
         this._isbn = isbn;
         this._title = title;
     }
