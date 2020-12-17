@@ -19,13 +19,13 @@ const bookfunc: AzureFunction = async function (context: Context, req: HttpReque
 
     // create an instance of our controller that will be used in all 
     // request methods
-    let controller = new BookProvider(config);
+    let bookData = new BookProvider(config);
 
     if (req.method === "POST") {
         let book: Book = req.body;
         console.log(book);
         try {
-            let newId = await controller.create(book);
+            await bookData.create(book);
             context.res = {
                 status: 204
             };
@@ -41,7 +41,7 @@ const bookfunc: AzureFunction = async function (context: Context, req: HttpReque
     else if (req.method === "PUT") {
         try {
             let msg: any = req.body;
-            await controller.update(msg);
+            await bookData.update(msg);
             context.res = {
                 status: 204
             }
@@ -58,9 +58,9 @@ const bookfunc: AzureFunction = async function (context: Context, req: HttpReque
         try {
             let result: any;
             if (id) {
-                result = await controller.get(id);
+                result = await bookData.get(id);
             } else {
-                result = await controller.getAll();
+                result = await bookData.getAll();
             }
             if (result !== undefined) {
                 context.res = {
@@ -81,7 +81,7 @@ const bookfunc: AzureFunction = async function (context: Context, req: HttpReque
         }
     } else if (req.method === "DELETE") {
         try {
-            await controller.delete(id);
+            await bookData.delete(id);
             context.res = {
                 status: 204
             }

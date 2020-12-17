@@ -1,4 +1,4 @@
-import { ConnectionPool, IRecordSet, NVarChar, VarChar } from 'mssql';
+import { NVarChar, VarChar } from 'mssql';
 import { BaseProvider } from './BaseProvider';
 import { Book } from './Book';
 import { DataProvider } from './DataProvider';
