@@ -18,10 +18,18 @@ use demodb
 go
 
 if not exists(select * from sys.objects where name = 'books')
-    create table books (
-        isbn varchar(50) primary key not null,
-        title nvarchar(100) not null,
-        authors nvarchar(200) not null,
-        tags nvarchar(200)
-    );
+  create table books (
+      isbn varchar(50) primary key not null,
+      title nvarchar(100) not null,
+      authors nvarchar(200) not null,
+      tags nvarchar(200)
+  );
+  
+if not exists(select * from sys.objects where name = "people")
+  create table people (
+    id int identity(1,1) primary key not null,
+    surname nvarchar(50) not null,
+    givenName nvarchar(50) not null,
+    email nvarchar(50)
+  )
 ```
