@@ -35,8 +35,9 @@ export class BookProvider extends BaseProvider implements DataProvider<Book> {
         ];
     }
 
-    async create(value: Book): Promise<void> {
+    async create(value: Book): Promise<any> {
         await super.executeQuery(sqlNewBook, this.getArgs(value));
+        return value.isbn;
     }
 
     async update(value: Book): Promise<void> {
