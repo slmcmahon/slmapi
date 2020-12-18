@@ -1,6 +1,7 @@
 import { NVarChar, VarChar } from 'mssql';
 import { BaseProvider } from './BaseProvider';
 import { Book } from './Book';
+import { DataError } from './DataError';
 import { DataProvider } from './DataProvider';
 import { QueryArgs } from './QueryArgs';
 
@@ -20,12 +21,12 @@ export class BookProvider extends BaseProvider implements DataProvider<Book> {
         super(dbConfig);
     }
 
-    private getArgs(value: Book): QueryArgs[] {
+    private getArgs(book: Book): QueryArgs[] {
         return [
-            { name: ISBN, type: VarChar, value: value.isbn },
-            { name: Title, type: NVarChar, value: value.title },
-            { name: Authors, type: NVarChar, value: value.authors },
-            { name: Tags, type: NVarChar, value: value.tags }
+            { name: ISBN, type: VarChar, value: book.isbn },
+            { name: Title, type: NVarChar, value: book.title },
+            { name: Authors, type: NVarChar, value: book.authors },
+            { name: Tags, type: NVarChar, value: book.tags }
         ];
     }
 
@@ -35,13 +36,26 @@ export class BookProvider extends BaseProvider implements DataProvider<Book> {
         ];
     }
 
-    async create(value: Book): Promise<any> {
-        await super.executeQuery(sqlNewBook, this.getArgs(value));
-        return value.isbn;
+    async create(book: Book): Promise<any> {
+        try {
+            await super.executeQuery(sqlNewBook, this.getArgs(book));
+            return book;
+        } catch (ex) {
+            if (ex.number === 2627) {
+                throw new DataError('A record already exists for the provided id', 409);
+            } else {
+                throw (ex);
+            }
+        }
     }
 
-    async update(value: Book): Promise<void> {
-        await super.executeQuery(sqlUpdateBook, this.getArgs(value));
+    async update(book: Book): Promise<void> {
+        // this will just check to see if a record exists.  If not, then it 
+        // will throw an exception that indicates that the record does not exist
+        await this.get(book.isbn);
+
+        // if we got this far, then the record exists, so update it.
+        await super.executeQuery(sqlUpdateBook, this.getArgs(book));
     }
 
     async get(isbn: string): Promise<Book> {
@@ -49,8 +63,9 @@ export class BookProvider extends BaseProvider implements DataProvider<Book> {
         if (records.length > 0) {
             let rec = records[0];
             return { isbn: rec.isbn, title: rec.title, authors: rec.authors, tags: rec.tags };
+        } else {
+            throw new DataError('No record exists for the provided id', 404);
         }
-        return null;
     }
 
     async getAll(): Promise<Book[]> {
@@ -61,6 +76,7 @@ export class BookProvider extends BaseProvider implements DataProvider<Book> {
     }
 
     async delete(isbn: string): Promise<void> {
+        await this.get(isbn);
         await super.executeQuery(sqlDeleteBook, this.getIsbnArg(isbn));
     }
 }

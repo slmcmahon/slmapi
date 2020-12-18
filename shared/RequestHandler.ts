@@ -1,78 +1,58 @@
 import { Context, HttpRequest } from "@azure/functions"
+import { DataError } from "./DataError";
 import { DataProvider } from "./DataProvider";
 
 const handleRequest = async (context: Context, req: HttpRequest, provider: DataProvider<any>) => {
     const id = context.bindingData.id;
 
-    if (req.method === "POST") {
-        let value: any = req.body;
-        console.log(value);
-        try {
-            await provider.create(value);
-            context.res = {
-                status: 204
-            };
-        } catch (ex) {
-            context.res = {
-                status: 500,
-                body: {
-                    message: ex.message
-                }
+    switch (req.method) {
+        case "POST": {
+            let value: any = req.body;
+            console.log(value);
+            try {
+                let result = await provider.create(value);
+                context.res = status(200, result);
+            } catch (ex) {
+                context.res = handleException(ex);
             }
+            break;
         }
-    }
-    else if (req.method === "PUT") {
-        try {
-            let msg: any = req.body;
-            await provider.update(msg);
-            context.res = {
-                status: 204
+        case "PUT": {
+            try {
+                let msg: any = req.body;
+                await provider.update(msg);
+                context.res = status(204);
+            } catch (ex) {
+                context.res = handleException(ex);
             }
-        } catch (ex) {
-            context.res = {
-                status: 500,
-                body: {
-                    message: ex.message
-                }
-            }
+            break;
         }
-    }
-    else if (req.method === "GET") {
-        try {
-            let result: any;
-            if (id) {
-                result = await provider.get(id);
-            } else {
-                result = await provider.getAll();
-            }
-            if (result !== undefined) {
-                context.res = {
-                    status: 200,
-                    body: JSON.stringify(result, null, 2)
-                };
-            } else {
-                context.res = {
-                    status: 400,
-                    message: `No records found for id ${id}`
+        case "GET": {
+            try {
+                let result: any;
+                if (id) {
+                    result = await provider.get(id);
+                } else {
+                    result = await provider.getAll();
                 }
+                context.res = status(200, result);
+            } catch (ex) {
+                context.res = handleException(ex);
             }
-        } catch (ex) {
-            context.res = {
-                status: 500,
-                body: ex.message
-            }
+            break;
         }
-    } else if (req.method === "DELETE") {
-        try {
-            await provider.delete(id);
-            context.res = {
-                status: 204
+        case "DELETE": {
+            try {
+                await provider.delete(id);
+                context.res = status(204);
+            } catch (ex) {
+                context.res = handleException(ex);
             }
-        } catch (ex) {
-            context.res = {
-                status: 500,
-                message: ex.message
-            }
+            break;
+        }
+        default: {
+            context.res = status(405);
+            break;
         }
     }
 };
@@ -84,6 +64,24 @@ const getConfig = () => {
         server: process.env.DBServer,
         database: process.env.DBName
     };
+}
+
+const handleException = (ex: any) => {
+    if (ex instanceof DataError) {
+        return status(ex.code, ex.message);
+    } else {
+        return status(500, ex.message);
+    }
+}
+
+const status = (code: number, message?: string) => {
+    let stat: any = {
+        status: code
+    };
+    if (message) {
+        stat.body = code === 200 ? message : { message };
+    }
+    return stat;
 }
 
 export { handleRequest, getConfig }

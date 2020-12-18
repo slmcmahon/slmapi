@@ -1,5 +1,6 @@
 import { Int, NVarChar } from "mssql";
 import { BaseProvider } from "./BaseProvider";
+import { DataError } from "./DataError";
 import { DataProvider } from "./DataProvider";
 import { Person } from "./Person";
 import { QueryArgs } from "./QueryArgs";
@@ -35,22 +36,33 @@ export class PeopleProvider extends BaseProvider implements DataProvider<Person>
         ];
     }
 
-    async create(value: any): Promise<any> {
-        let result = await super.executeQuery(sqlNewPerson, this.getArgs(value));
-        return result[0].id;
+    async create(person: Person): Promise<any> {
+        try {
+            let result = await super.executeQuery(sqlNewPerson, this.getArgs(person));
+            person.id = result[0].id;
+            return person;
+        } catch (ex) {
+            if (ex.number === 2627) {
+                throw new DataError('A record already exists for the provided id', 409);
+            } else {
+                throw (ex);
+            }
+        }
     }
 
-    async update(value: any): Promise<void> {
-        await super.executeQuery(sqlUpdatePerson, this.getArgs(value));
+    async update(person: Person): Promise<void> {
+        await this.get(person.id);
+        await super.executeQuery(sqlUpdatePerson, this.getArgs(person));
     }
 
-    async get(id: any): Promise<any> {
+    async get(id: any): Promise<Person> {
         let records = await super.executeQuery(sqlGetPerson, this.getIdArg(id));
         if (records.length > 0) {
             let rec = records[0];
             return { id: rec.id, surname: rec.surname, givenName: rec.givenName, email: rec.email };
+        } else {
+            throw new DataError('No record exists for the provided id', 404);
         }
-        return null;
     }
 
     async getAll(): Promise<Person[]> {
@@ -61,6 +73,7 @@ export class PeopleProvider extends BaseProvider implements DataProvider<Person>
     }
 
     async delete(id: any): Promise<void> {
+        await this.get(id);
         await super.executeQuery(sqlDeletePerson, this.getIdArg(id));
     }
 
