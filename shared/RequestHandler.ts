@@ -64,6 +64,9 @@ const getConfig = () => {
 }
 
 const handleException = (ex: any) => {
+    // TODO: It is not a good practice to return HTTP status codes from the DataProviders.
+    //       This should be refactored so that the management of the data is completely
+    //       separate from the REST responses so that we can test these pieces in isolation
     if (ex instanceof DataError) {
         return status(ex.code, ex.message);
     } else {
