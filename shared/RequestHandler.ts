@@ -7,10 +7,8 @@ const handleRequest = async (context: Context, req: HttpRequest, provider: DataP
 
     switch (req.method) {
         case "POST": {
-            let value: any = req.body;
-            console.log(value);
             try {
-                let result = await provider.create(value);
+                let result = await provider.create(req.body);
                 context.res = status(200, result);
             } catch (ex) {
                 context.res = handleException(ex);
@@ -19,8 +17,7 @@ const handleRequest = async (context: Context, req: HttpRequest, provider: DataP
         }
         case "PUT": {
             try {
-                let msg: any = req.body;
-                await provider.update(msg);
+                await provider.update(req.body);
                 context.res = status(204);
             } catch (ex) {
                 context.res = handleException(ex);
